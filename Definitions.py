@@ -18,3 +18,28 @@ def render(img, x, y):
         pass
     else:
         v.blit(img, (x, y))
+
+def clrdet(direction, x, y, x_siz, y_siz, clr):
+    from Game import v
+    cntr_x = int(x + x_siz / 2)
+    cntr_y = int(y + y_siz / 2)
+    if direction == 'r':
+        if v.get_at((cntr_x + int(0.5 * x_siz), cntr_y))[:3] == clr:
+            return True
+        else:
+            return False
+    if direction == 'l':
+        if v.get_at((cntr_x - int(0.5 * x_siz), cntr_y))[:3] == clr:
+            return True
+        else:
+            return False
+    if direction == 'u':
+        if v.get_at((cntr_x, cntr_y - int(0.5 * y_siz)))[:3] == clr:
+            return True
+        else:
+            return False
+    if direction == 'd':
+        if v.get_at((cntr_x, cntr_y + int(0.5 * y_siz)))[:3] == clr:
+            return True
+        else:
+            return False
