@@ -24,22 +24,29 @@ def clrdet(direction, x, y, x_siz, y_siz, clr):
     cntr_x = int(x + x_siz / 2)
     cntr_y = int(y + y_siz / 2)
     if direction == 'r':
-        if v.get_at((cntr_x + int(0.5 * x_siz), cntr_y))[:3] == clr:
+        if v.get_at((cntr_x + int(0.6 * x_siz), cntr_y))[:3] == clr:
             return True
         else:
             return False
     if direction == 'l':
-        if v.get_at((cntr_x - int(0.5 * x_siz), cntr_y))[:3] == clr:
+        if v.get_at((cntr_x - int(0.6 * x_siz), cntr_y))[:3] == clr:
             return True
         else:
             return False
     if direction == 'u':
-        if v.get_at((cntr_x, cntr_y - int(0.5 * y_siz)))[:3] == clr:
+        if v.get_at((cntr_x, cntr_y - int(0.6 * y_siz)))[:3] == clr:
             return True
         else:
             return False
     if direction == 'd':
-        if v.get_at((cntr_x, cntr_y + int(0.5 * y_siz)))[:3] == clr:
+        if v.get_at((cntr_x, cntr_y + int(0.6 * y_siz)))[:3] == clr:
             return True
         else:
             return False
+
+def door(P1_x, P1_y, x, y, x_siz, y_siz, Fg):
+    import pygame as pg
+    from Game import v
+    pg.draw.rect(v, (Fg), (x, y, x_siz, y_siz))
+    if P1_x >= x and P1_x <= x + x_siz and P1_y >= y and P1_y <= y + y_siz:
+        return True

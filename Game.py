@@ -10,7 +10,7 @@ k = {w: 0, s: 0, a: 0, d: 0, e: 0, q: 0, bk: 0, sp: 0, tb: 0, esc: 0, sh: 0, p: 
 gamemode = 'Game' # gamemodes control what section of the loop is actively
 
 room = 0 # rooms are stored as integers; this is important for the following variables and dictionaries which are used in generation
-room_dat = {'Bg':[(50, 50, 50)], 'Fg':[(100, 100, 100)], 'P1_x':[120], 'P1_y':[120]} # this dictionary contains colors of the room in RGB as well as starting position of the player character
+room_dat = {'Bg':[(50, 50, 50)], 'Fg':[(100, 100, 100)], 'P1_x':[284], 'P1_y':[196]} # this dictionary contains colors of the room in RGB as well as starting position of the player character
 room_shp = {'A1':[1], 'B1':[1], 'C1':[1], 'D1':[0], 'E1':[0], 'F1':[0], 'G1':[0], 'H1':[0], 'I1':[0], 'J1':[0], 'K1':[0], 'L1':[0], 'M1':[0], 'N1':[0],
             'A2':[1], 'B2':[1], 'C2':[1], 'D2':[0], 'E2':[0], 'F2':[0], 'G2':[0], 'H2':[0], 'I2':[0], 'J2':[0], 'K2':[0], 'L2':[0], 'M2':[0], 'N2':[0],
             'A3':[1], 'B3':[1], 'C3':[1], 'D3':[1], 'E3':[1], 'F3':[0], 'G3':[0], 'H3':[0], 'I3':[0], 'J3':[0], 'K3':[0], 'L3':[0], 'M3':[0], 'N3':[0],
@@ -23,10 +23,10 @@ roomvar1 = 0
 roomvar2 = 0
 roomvar3 = 0 # these three misc variables will help with triggers that i would set off while in rooms
 
-boyimg = pg.image.load('Assets/t_boy.png')
+boyimg = pg.image.load('Assets/c_boy.png')
 manimg = pg.image.load('Assets/main.png') # importing and loading images
 
-from Definitions import smth, obst, render, clrdet # personal imports
+from Definitions import smth, obst, render, clrdet, door # personal imports
 
 running = 1
 while running:
@@ -62,8 +62,12 @@ while running:
                 room_setup = 0
             boyspeed = 4
             boy = smth(P1_x, P1_y, 44, 91) # may upgrade the player from smth to a more specific class - not necessary as of now (6/14)
-            if k[p]:
-                print(str(P1_x) + ', ' + str(P1_y))
+            boy_cntr_x = int(P1_x + 44 / 2)
+            boy_cntr_y = int((P1_y + 61) + 30 / 2)
+
+            if door(boy_cntr_x, boy_cntr_y, 1800, 600, 120, 360, room_dat.get('Fg')[room]):
+                next_room()
+
             if k[a] and not clrdet('l', P1_x, P1_y + 61, 44, 30, room_dat.get('Bg')[room]):
                 P1_x -= boyspeed * k[a]
             if k[d] and not clrdet('r', P1_x, P1_y + 61, 44, 30, room_dat.get('Bg')[room]):
