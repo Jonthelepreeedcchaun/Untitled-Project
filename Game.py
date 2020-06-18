@@ -1,32 +1,33 @@
 import os # public imports
 os.environ['PYGAME_HIDE_SUPPORT_PROMPT'] = "hide"
-import sys, pygame as pg, random as rng
+import sys, pygame as pg, random as rng, json
 pg.display.set_caption('Untitled Project')
-v = pg.display.set_mode((0, 0), pg.FULLSCREEN)
+video = pg.display.set_mode((0, 0), pg.FULLSCREEN)
 
-w = pg.K_w; s = pg.K_s; a = pg.K_a; d = pg.K_d; e = pg.K_e; q = pg.K_q; bk = pg.K_BACKSPACE; sp = pg.K_SPACE; tb = pg.K_TAB; esc = pg.K_ESCAPE; sh = pg.K_LSHIFT; p = pg.K_p # key variables, used for key detection
-k = {w: 0, s: 0, a: 0, d: 0, e: 0, q: 0, bk: 0, sp: 0, tb: 0, esc: 0, sh: 0, p: 0} # dictionary using above key variables; a zero represents the key not being pressed and a one is it currently being pressed
+z = pg.K_z; x = pg.K_x; c = pg.K_c; v = pg.K_v; w = pg.K_w; s = pg.K_s; a = pg.K_a; d = pg.K_d; e = pg.K_e; q = pg.K_q; bk = pg.K_BACKSPACE; sp = pg.K_SPACE; tb = pg.K_TAB; esc = pg.K_ESCAPE; sh = pg.K_LSHIFT; p = pg.K_p # key variables, used for key detection
+k = {z: 0, x: 0, c: 0, v: 0, w: 0, s: 0, a: 0, d: 0, e: 0, q: 0, bk: 0, sp: 0, tb: 0, esc: 0, sh: 0, p: 0} # dictionary using above key variables; a zero represents the key not being pressed and a one is it currently being pressed
 
-gamemode = 'Game' # gamemodes control what section of the loop is actively
+mode = 'Menu' # modes control what section of the loop is active
+state = 'Main' # states control which subsection of the loop is active
 
 room = 0 # rooms are stored as integers; this is important for the following variables and dictionaries which are used in generation
-room_dat = {'Bg':[(50, 50, 50)], 'Fg':[(100, 100, 100)], 'P1_x':[284], 'P1_y':[196]} # this dictionary contains colors of the room in RGB as well as starting position of the player character
-room_shp = {'A1':[1], 'B1':[1], 'C1':[1], 'D1':[0], 'E1':[0], 'F1':[0], 'G1':[0], 'H1':[0], 'I1':[0], 'J1':[0], 'K1':[0], 'L1':[0], 'M1':[0], 'N1':[0],
-            'A2':[1], 'B2':[1], 'C2':[1], 'D2':[0], 'E2':[0], 'F2':[0], 'G2':[0], 'H2':[0], 'I2':[0], 'J2':[0], 'K2':[0], 'L2':[0], 'M2':[0], 'N2':[0],
-            'A3':[1], 'B3':[1], 'C3':[1], 'D3':[1], 'E3':[1], 'F3':[0], 'G3':[0], 'H3':[0], 'I3':[0], 'J3':[0], 'K3':[0], 'L3':[0], 'M3':[0], 'N3':[0],
-            'A4':[1], 'B4':[1], 'C4':[1], 'D4':[1], 'E4':[1], 'F4':[1], 'G4':[0], 'H4':[0], 'I4':[0], 'J4':[0], 'K4':[0], 'L4':[0], 'M4':[0], 'N4':[0],
-            'A5':[0], 'B5':[0], 'C5':[0], 'D5':[1], 'E5':[1], 'F5':[1], 'G5':[1], 'H5':[1], 'I5':[1], 'J5':[1], 'K5':[1], 'L5':[1], 'M5':[1], 'N5':[1],
-            'A6':[0], 'B6':[0], 'C6':[0], 'D6':[0], 'E6':[1], 'F6':[1], 'G6':[1], 'H6':[1], 'I6':[1], 'J6':[1], 'K6':[1], 'L6':[1], 'M6':[1], 'N6':[1],
-            'A7':[0], 'B7':[0], 'C7':[0], 'D7':[0], 'E7':[1], 'F7':[1], 'G7':[1], 'H7':[1], 'I7':[1], 'J7':[1], 'K7':[1], 'L7':[1], 'M7':[1], 'N7':[1]} # this dictionary is laid out proportionately to how the rooms are actually generated
-room_setup = 1 # an if statement will be passed at the beginning of the room - this mainly serves to reset the position of the player character
-roomvar1 = 0
-roomvar2 = 0
-roomvar3 = 0 # these three misc variables will help with triggers that i would set off while in rooms
+room_drs = {1:[], 2:[], 3:[], 4:[], 5:[], 6:[], 7:[], 8:[], 9:[], 10:[0, "1"]}
+room_dat = {'Bg':[(50, 50, 50)], 'Fg':[(100, 100, 100)]} # this dictionary contains colors of the room in RGB
+with open('Gamedata/room_shp.json', 'r') as f:
+    room_shp = json.load(f)
+room_colm = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N"]
+room_rows = ["1", "2", "3", "4", "5", "6", "7"]
+miscvar1 = 0
+miscvar2 = 0
+miscvar3 = 0 # these three misc variables will help with triggers
+
+Bg_gen = 0
 
 boyimg = pg.image.load('Assets/c_boy.png')
 manimg = pg.image.load('Assets/main.png') # importing and loading images
 
-from Definitions import smth, obst, render, clrdet, door # personal imports
+from Definitions import smth, obst, render, clrdet, door, text_objects, message_display, terrain_gen # personal imports
+pg.font.init()
 
 running = 1
 while running:
@@ -44,29 +45,27 @@ while running:
                 if this == event.key:
                     k[this] = 0 # these for loops handle all key inputs
 
-    if gamemode == 'Menu':
-        pass
+    if mode == 'Menu':
+        message_display("Untitled Project", (120, 120), 50, ((0, 0, 0)))
+        message_display("Press 'Space' to start", (120, 220), 30, ((0, 0, 0)))
+        message_display("Press 'Z' to enter dev mode", (120, 300), 30, ((0, 0, 0)))
+        if k[sp]:
+            mode = "Game"
+            room = 0
+            P1_x = 260; P1_y = 260
+        if k[z]:
+            mode = "devmode"
+            room = 0
+            devmode_menu = 0
 
-    if gamemode == 'Game':
-        room_x = 0; room_y = 120
-        for this in room_shp:
-            room_x += 120
-            if room_x == 1800:
-                room_x = 120; room_y += 120
-            if room_shp.get(this)[room]:
-                pg.draw.rect(v, (room_dat.get('Fg')[room]), (room_x, room_y, 120, 120)) # this is how the rooms are generated - in 120 by 120 squares
+    if mode == 'Game':
+        Bg_gen = 1
+        terrain_gen(room_shp, room)
         if room == 0:
-            if room_setup:
-                P1_x = room_dat.get('P1_x')[room]
-                P1_y = room_dat.get('P1_y')[room]
-                room_setup = 0
-            boyspeed = 4
+            boyspeed = 3
             boy = smth(P1_x, P1_y, 44, 91) # may upgrade the player from smth to a more specific class - not necessary as of now (6/14)
             boy_cntr_x = int(P1_x + 44 / 2)
             boy_cntr_y = int((P1_y + 61) + 30 / 2)
-
-            if door(boy_cntr_x, boy_cntr_y, 1800, 600, 120, 360, room_dat.get('Fg')[room]):
-                next_room()
 
             if k[a] and not clrdet('l', P1_x, P1_y + 61, 44, 30, room_dat.get('Bg')[room]):
                 P1_x -= boyspeed * k[a]
@@ -78,12 +77,81 @@ while running:
                 P1_y += boyspeed * k[s]
             render(boyimg, P1_x, P1_y)
 
-    if gamemode == 'Paused':
-        pass
+    if mode == 'devmode':
+        Bg_gen = 1
+        terrain_gen(room_shp, room)
+        devmode_mouse_var = 120; devmode_colm = " "
+        for this in room_colm:
+            if mouse_x >= devmode_mouse_var and mouse_x < (devmode_mouse_var + 120):
+                devmode_colm = this
+            devmode_mouse_var += 120
+        devmode_mouse_var = 120; devmode_rows = " "
+        for this in room_rows:
+            if mouse_y >= devmode_mouse_var and mouse_y < (devmode_mouse_var + 120):
+                devmode_rows = this
+            devmode_mouse_var += 120
+        devmode_mouse_var = devmode_colm + devmode_rows
+
+        if devmode_menu:
+            message_display("Press 'Space' to close the Devmenu", (20, 20), 15, ((255, 255, 255)))
+            message_display("room = " + str(room), (20, 120), 15, ((255, 255, 255)))
+            message_display("Press Z to increase the room number and X to reduce it", (20, 140), 15, ((255, 255, 255)))
+            message_display("Press S to save your changes", (20, 340), 15, ((255, 255, 255)))
+            if k[sp]:
+                miscvar1 = 1
+            if not k[sp] and miscvar1:
+                miscvar1 = 0
+                devmode_menu = 0
+        else:
+            message_display("Press 'Space' to access the Devmenu", (20, 20), 15, ((255, 255, 255)))
+            if k[sp]:
+                miscvar1 = 1
+            if not k[sp] and miscvar1:
+                miscvar1 = 0
+                devmode_menu = 1
+
+        if k[s]:
+            with open('Gamedata/room_shp.json', 'w', encoding = 'utf-8') as f:
+                json.dump(room_shp, f, ensure_ascii = False, indent = 4)
+        if k[z]:
+            miscvar2 = 1
+        if not k[z] and miscvar2:
+            miscvar2 = 0
+            room += 1
+        if k[x]:
+            miscvar3 = 1
+        if not k[x] and miscvar3:
+            miscvar3 = 0
+            if room > 0:
+                room -= 1
+
+        devmode_mode = "terrain"
+
+        if devmode_mode == "terrain":
+            if not devmode_colm == " " and not devmode_rows == " ": # this if statement checks if the mouse is on the room shape grid
+                if mouse1:
+                    room_shp[devmode_mouse_var][room] = 1
+                if mouse2:
+                    room_shp[devmode_mouse_var][room] = 0
+            else:
+                if devmode_colm == " " and not devmode_rows == " ":
+                    if mouse_x > 420.69:
+                        pass #rightside
+                    if mouse_x < 420.69:
+                        pass #leftside
+                if devmode_rows == " " and not devmode_colm == " ":
+                    if mouse_y > 420.69:
+                        pass #downside
+                    if mouse_y < 420.69:
+                        pass #upside
 
     pg.time.wait(10)
     pg.display.flip()
-    if gamemode == 'Game':
-        v.fill(room_dat.get('Bg')[room]) # background is filled in accordance to the color associated with the room
+    if Bg_gen:
+        if room >= len(room_dat["Bg"]):
+            background_color = (50, 50, 50)
+        else:
+            background_color = room_dat.get('Bg')[room]
+        video.fill(background_color) # background is filled in accordance to the color associated with the room
     else:
-        v.fill((125, 125, 125))
+        video.fill((125, 125, 125))
