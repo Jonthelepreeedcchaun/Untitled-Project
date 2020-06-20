@@ -44,7 +44,7 @@ def clrdet(direction, x, y, x_siz, y_siz, clr):
         else:
             return False
 
-def door(P1_x, P1_y, defaults, x = 'defaults', y = 'defaults', x_siz = 'defaults', y_siz = 'defaults'):
+def door(P1_x, P1_y, defaults, x = 'lmao', y = 'imagine having', x_siz = 'default', y_siz = 'values'):
     import pygame as pg
     from Game import video as v, room_dat, room
     if room >= len(room_dat["Fg"]):
@@ -109,7 +109,7 @@ def text_objects(text, font, colour): ##creates text objects
     textSurface = font.render(text, True, colour)
     return textSurface, textSurface.get_rect()
 
-def message_display(text, position, size, colour):  ##defines messages to be typed and displayed and whatnot
+def message_display(text, position, size = 15, colour = ((255, 255, 255))):  ##defines messages to be typed and displayed and whatnot
     import pygame as pg
     from Game import video as v
     smallText = pg.font.Font('Assets/Helvetica.ttf',size)
@@ -118,11 +118,13 @@ def message_display(text, position, size, colour):  ##defines messages to be typ
     v.blit(TextSurf, TextRect)
 
 def door_gen(P1_x, P1_y):
-    from Game import room_drs
+    from Game import room_drs, room
     for this in room_drs:
         if room in room_drs.get(this):
-            if door(boy_cntr_x, boy_cntr_y, 10):
-                room = 
+            room_index = room_drs.get(this).index(room)
+            if door(P1_x, P1_y, this):
+                room = int(room_drs.get(this)[room_index + 1])
+                return room
 
 def terrain_gen(room_shp, room):
     import pygame as pg
